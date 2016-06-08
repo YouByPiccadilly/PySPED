@@ -54,7 +54,7 @@ DIRNAME = os.path.dirname(__file__)
 class DistNSU(XMLNFe):
     def __init__(self):
         super(DistNSU, self).__init__()
-        self.ultNSU = TagCaracter(nome='ultNSU', tamanho=[1, 15], raiz='//distDFeInt/distNSU', valor='0')
+        self.ultNSU = TagCaracter(nome='ultNSU', tamanho=[1, 15], raiz='//distDFeInt/distNSU', valor='0000000000000000')
 
     def get_xml(self):
         if not self.ultNSU.valor:
@@ -144,9 +144,9 @@ class DistDFeInt(XMLNFe):
 class DocZip(XMLNFe):
     def __init__(self):
         super(DocZip, self).__init__()
-        self.NSU    = TagCaracter(nome='docZip', propriedade='NSU'   , namespace=NAMESPACE_NFE, raiz='//docZip')
-        self.schema = TagCaracter(nome='docZip', propriedade='schema', namespace=NAMESPACE_NFE, raiz='//docZip')
-        self.base64Binary = TagCaracter(nome='', namespace=NAMESPACE_NFE, raiz='//docZip')
+        self.NSU    = TagCaracter(nome='docZip', propriedade='NSU'   , namespace=NAMESPACE_NFE, raiz='')
+        self.schema = TagCaracter(nome='docZip', propriedade='schema', namespace=NAMESPACE_NFE, raiz='')
+        self.base64Binary = TagCaracter(nome='docZip', namespace=NAMESPACE_NFE, raiz='')
 
     def get_xml(self):
         xml = XMLNFe.get_xml(self)

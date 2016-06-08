@@ -904,15 +904,16 @@ class Imposto(nfe_200.Imposto):
             xml += self.ICMS.xml
             xml += self.IPI.xml
             xml += self.II.xml
+        else:
+            # ISSQN é esperado antes de PIS e COFINS
+            xml += self.ISSQN.xml
 
         xml += self.PIS.xml
         xml += self.PISST.xml
         xml += self.COFINS.xml
         xml += self.COFINSST.xml
-        xml += self.ICMSUFDest.xml
-
-        if self.ISSQN.cSitTrib.valor:
-            xml += self.ISSQN.xml
+        if self.ICMSUFDest.vBCUFDest.valor:
+            xml += self.ICMSUFDest.xml
 
         xml += '</imposto>'
         return xml
@@ -1045,7 +1046,7 @@ class DI(nfe_200.DI):
     def __init__(self):
         super(DI, self).__init__()
         self.tpViaTransp = TagCaracter(nome='tpViaTransp', codigo='I23a', tamanho=[1,  1], raiz='//DI')
-        self.vAFRMM      = TagDecimal(nome='vAFRMM'      , codigo='I23b', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz='//DI', obrigatorio=False)
+        self.vAFRMM  = TagDecimal(nome='vAFRMM', codigo='I23b', tamanho=[1, 15, 1], decimais=[0, 2, 2], raiz='//DI', obrigatorio=False)
         self.tpIntermedio = TagCaracter(nome='tpIntermedio', codigo='I23c', tamanho=[1,  1], raiz='//DI')
         self.CNPJ = TagCaracter(nome='CNPJ'  , codigo='I23d', tamanho=[14, 14], raiz='//DI', obrigatorio=False)
         self.UFTerceiro = TagCaracter(nome='UFTerceiro', codigo='I23e', tamanho=[2, 2], raiz='//DI', obrigatorio=False)
@@ -1514,9 +1515,9 @@ class ICMSTot(nfe_200.ICMSTot):
     def __init__(self):
         super(ICMSTot, self).__init__()
         self.vICMSDeson = TagDecimal(nome='vICMSDeson', codigo='W04a', tamanho=[1, 15, 1], decimais=[1,  2,  2], raiz='//NFe/infNFe/total/ICMSTot')
-        self.vFCPUFDest = TagDecimal(nome='vFCPUFDest', codigo='W04b', tamanho=[1, 15, 1], decimais=[1,  2,  2], raiz='//NFe/infNFe/total/ICMSTot')
-        self.vICMSUFDest = TagDecimal(nome='vICMSUFDest', codigo='W04c', tamanho=[1, 15, 1], decimais=[1,  2,  2], raiz='//NFe/infNFe/total/ICMSTot')
-        self.vICMSUFRemet = TagDecimal(nome='vICMSUFRemet', codigo='W04d', tamanho=[1, 15, 1], decimais=[1,  2,  2], raiz='//NFe/infNFe/total/ICMSTot')
+        self.vFCPUFDest = TagDecimal(nome='vFCPUFDest', codigo='W04b', tamanho=[1, 15, 1], decimais=[1,  2,  2], raiz='//NFe/infNFe/total/ICMSTot', obrigatorio=False)
+        self.vICMSUFDest = TagDecimal(nome='vICMSUFDest', codigo='W04c', tamanho=[1, 15, 1], decimais=[1,  2,  2], raiz='//NFe/infNFe/total/ICMSTot', obrigatorio=False)
+        self.vICMSUFRemet = TagDecimal(nome='vICMSUFRemet', codigo='W04d', tamanho=[1, 15, 1], decimais=[1,  2,  2], raiz='//NFe/infNFe/total/ICMSTot', obrigatorio=False)
 
     def get_xml(self):
         xml = XMLNFe.get_xml(self)

@@ -429,7 +429,7 @@ class TagData(TagCaracter):
     def set_valor(self, novo_valor):
         if isinstance(novo_valor, basestring):
             if novo_valor:
-                novo_valor = datetime.strptime(novo_valor, '%Y-%m-%d')
+                novo_valor = datetime.strptime(novo_valor[:10], '%Y-%m-%d')
             else:
                 novo_valor = None
 
@@ -839,10 +839,8 @@ class XMLNFe(NohXML):
         xml = tira_abertura(self.xml).encode('utf-8')
 
         esquema = etree.XMLSchema(etree.parse(arquivo_esquema))
-        #esquema.assertValid(etree.fromstring(xml))
         esquema.validate(etree.fromstring(xml))
 
-        #return esquema.error_log
         namespace = '{http://www.portalfiscal.inf.br/nfe}'
         return "\n".join([x.message.replace(namespace, '') for x in esquema.error_log])
 
@@ -1005,4 +1003,3 @@ def somente_ascii(funcao):
         return unicodedata.normalize(b'NFKD', funcao(*args, **kwargs)).encode('ascii', 'ignore')
 
     return converter_para_ascii_puro
-

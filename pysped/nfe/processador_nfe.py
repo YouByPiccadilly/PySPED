@@ -164,7 +164,8 @@ class ConexaoHTTPS(HTTPSConnection):
         if self._tunnel_host:
             self.sock = sock
             self._tunnel()
-        self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file, ssl_version=ssl.PROTOCOL_SSLv3, do_handshake_on_connect=False)
+
+        self.sock = ssl.wrap_socket(sock, self.key_file, self.cert_file, ssl_version=ssl.PROTOCOL_SSLv23, do_handshake_on_connect=False)
 
 
 class ProcessadorNFe(object):
@@ -251,6 +252,8 @@ class ProcessadorNFe(object):
             if somente_ambiente_nacional:
                 self._servidor = webservices_3.AN[ambiente]['servidor']
                 self._url      = webservices_3.AN[ambiente][servico]
+                if ambiente == 1 and servico == WS_DFE_DISTRIBUICAO:
+                    self._servidor = 'www1.nfe.fazenda.gov.br'
 
             elif servico == WS_NFE_DOWNLOAD:
                 self._servidor = webservices_3.SVAN[ambiente]['servidor']
@@ -274,6 +277,14 @@ class ProcessadorNFe(object):
                     self._servidor = ws_a_usar[ambiente]['servidor%s' % servico]
                 else:
                     self._servidor = ws_a_usar[ambiente]['servidor']
+
+                self._url      = ws_a_usar[ambiente][servico]
+
+                if self.estado == 'RS' and servico == WS_NFE_CONSULTA_CADASTRO:
+                    self._servidor = 'sef.sefaz.rs.gov.br'
+                if (self.estado == 'SC' or self.estado == 'RJ') and servico == WS_NFE_CONSULTA_CADASTRO:
+                    self._servidor = 'cad.svrs.rs.gov.br'
+
                 self._url      = ws_a_usar[ambiente][servico]
 
         self._soap_envio.webservice = metodo_ws[servico]['webservice']
@@ -1357,6 +1368,18 @@ class ProcessadorNFe(object):
         processo = ProcessoNFe(webservice=WS_DFE_DISTRIBUICAO, envio=envio, resposta=resposta)
 
         envio.validar()
+
+        #Monta caminhos
+        if (ambiente or self.ambiente) == 1:
+            self.caminho = os.path.join(self.caminho, 'producao/dfe/')
+        else:
+            self.caminho = os.path.join(self.caminho, 'homologacao/dfe/')
+        self.caminho = os.path.join(self.caminho, datetime.now().strftime('%Y-%m') + '/')
+        try:
+            os.makedirs(self.caminho)
+        except:
+            pass
+
         nome_arq = self.caminho + datetime.now().strftime('%Y%m%dT%H%M%S')
         if self.salvar_arquivos:
             arq = open(nome_arq + '-cons-dist-dfe.xml', 'w')
